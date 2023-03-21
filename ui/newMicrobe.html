@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <link rel="stylesheet" href="app.css">
+    </head>
+
+    <script>
+         function micro_submit() {
+        var name = document.getElementById("micro_name").value;
+        var size = document.getElementById("micro_size").value;
+        var ph = document.getElementById("ph").value;
+        var vph = document.getElementById("vph").value;
+        var f1 = document.getElementById("f1").value;
+        var f2 = document.getElementById("f2").value;
+        var f3 = document.getElementById("f3").value;
+        var e1 = document.getElementById("e1").value;
+        var e2 = document.getElementById("e2").value;
+        var e3 = document.getElementById("e3").value;
+        Blink.msg("save_micro", name + "," + size + "," + ph + "," + vph + "," + f1 + "," + f2 + "," + f3 + "," + e1 + "," + e2 + "," + e3);
+    }
+    </script>
+    <body>
+        <h1>New Microbe</h1>
+        <button onclick='Blink.msg("link", "Microbe")'>Add Microbe</button>
+        <button onclick='Blink.msg("link", "Molecule")'>Add Molecule</button>
+        <button onclick='Blink.msg("link", "Sim")'>Simulation</button>
+        <br>
+        
+        <div class ="card" id="microbe_card">
+            <form onsubmit="return false;" method="post" id="new_molecule">
+                <label for="micro_name">Microbe Name</label><br>
+                <input type="text" id="micro_name" name="micro_name" value="Microbe"><br><br>
+                <label for="micro_size">Microbe Size</label><br>
+                <input type="text" id="micro_size" name="micro_size" value="0"><br><br>
+                <label for="ph">Preferred PH</label><br>
+                <input type="text" id="ph" name="ph" value="7"> <br><br>
+                <label for="vph">Variance PH</label><br>
+                <input type="text" id="vph" name="vph" value="0"> <br><br>
+                <label for="f1">Food 1</label><br>
+                <input type="text" id="f1" name="f1" value="Null"> <br><br>
+                <label for="f2">Food 2</label><br>
+                <input type="text" id="f2" name="f2" value="Null"> <br><br>
+                <label for="f3">Food 3</label><br>
+                <input type="text" id="f3" name="f3" value="Null"> <br><br>
+                <label for="e1">Excrement 1</label><br>
+                <input type="text" id="e1" name="e1" value="Null"> <br><br>
+                <label for="e2">Excrement 2</label><br>
+                <input type="text" id="e2" name="e2" value="Null"> <br><br>
+                <label for="e3">Excrement 3</label><br>
+                <input type="text" id="e3" name="e3" value="Null"> <br><br>
+                <button type="submit" name="submit" onclick="micro_submit()">Save</button>
+            </form>
+        </div>
+    </body>
+</html>

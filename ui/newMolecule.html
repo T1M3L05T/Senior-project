@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="app.css">
+</head>
+<script>
+    function mole_submit() {
+        var name = document.getElementById("mole_name").value;
+        var mass = document.getElementById("mole_mass").value;
+        var diff = document.getElementById("mole_diff").value;
+        var struct = document.getElementById("struct").value;
+        Blink.msg("save_mole", name + "," + mass + "," + diff + "," + struct);
+    }
+</script>
+
+<body>
+    <h1>New Molecule</h1>
+    <button onclick='Blink.msg("link", "Microbe")'>Add Microbe</button>
+    <button onclick='Blink.msg("link", "Molecule")'>Add Molecule</button>
+    <button onclick='Blink.msg("link", "Sim")'>Simulation</button>
+    <br>
+
+    <div class="card" id="mole_card">
+        <form onsubmit="return false;" method="post" id="new_molecule">
+            <label for="mole_name">Molecule Name</label><br>
+            <input type="text" id="mole_name" name="mole_name" value="Molecule"><br><br>
+            <label for="mole_mass">Molecule Mass</label><br>
+            <input type="text" id="mole_mass" name="mole_mass" value="0"><br><br>
+            <label for="mole_diff">Diffusion Coefficeint</label><br>
+            <input type="text" id="mole_diff" name="mole_diff" value="0"> <br>Diffusion Coefficeint is in water @ 25 degrees C in units of x10^-5 cm^2/s<br><br>
+            <label for="struct">Atomic Structure</label><br>
+            <input type="text" id="struct" name="struct" value="0"><br><br>
+            <button type="submit" name="submit" onclick="mole_submit()">Save</button>
+        </form>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <script type="text/javascript" src="app.js"></script>
+    <head>
+        <link rel="stylesheet" href="app.css">
+    </head>
+    <script>
+        function run() {
+            var m1 = document.getElementById("m1").value;
+            var m2 = document.getElementById("m2").value;
+            var calcT = document.getElementById("calcT").value;
+            var capT = document.getElementById("dataT").value;
+            var size = document.getElementById("size").value;
+            var vari = document.getElementById("vari").value;
+            Blink.msg("run", m1 + "," + m2 + "," + calcT + "," + capT + "," + size + "," + vari);
+        }
+    </script>
+    <body>
+        <h1>Simlation</h1>
+        <button onclick='Blink.msg("link", "Microbe")'>Add Microbe</button>
+        <button onclick='Blink.msg("link", "Molecule")'>Add Molecule</button>
+        <button onclick='Blink.msg("link", "Sim")'>Simulation</button>
+        <br>
+
+        <div class ="card" id="app_card">
+            <form onsubmit="return false;" method="post" id="new_molecule">
+                <label for="m1">Microbe 1</label><br>
+                <select id="m1" name="m1"> </select><br><br>
+                <label for="m2">Microbe 2</label><br>
+                <select id="m2" name="m2"> </select><br><br>
+                <label for="calcT">Calculation time</label><br>
+                <input type="text" id="calcT" name="calcT" value="5">s/update<br>
+                how often the program runs calculation. smaller will be more accurate, larger will run faster<br><br>
+                <label for="dataT">Data Frame</label><br>
+                <input type="text" id="dataT" name="dataT" value="900">s/frame<br>
+                how many seconds between data captures<br><br>
+                <label for="size">Grid Size</label><br>
+                <input type="text" id="size" name="size" value="10000">x3 microns<br>
+                to be fixed<br><br>
+                <label for="vari">Energy Variance</label><br>
+                <input type="text" id="vari" name="vari" value="20">%<br>
+                this setting will affect how much randomness plays into cells food consumtion and death<br><br>
+                <label for="m1">Microbe 1</label><br>
+                <select id="m1" name="m1"> 
+                    <option value="open"></option>
+                    <option value="close"></option>
+                </select><br><br>
+                <button type="submit" name="submit" onclick="run()">Start</button>
+            </form>
+        </div>
+    </body>
+</html>

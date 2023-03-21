@@ -1,0 +1,6 @@
+Microbe 
+ 0 
+ 7 
+ 0 
+ SubString{String}["Null", "Null", "Null"] 
+ SubString{String}["Null", "Null", "Null"]

@@ -1,0 +1,43 @@
+h1 {
+    color:seagreen;
+    text-align: center;
+    font-size: xx-large;
+    padding-top: 10px;
+    text-shadow: 1px 1px 1px whitesmoke;
+}
+.Title {
+    color:seagreen;
+    text-align: center;
+    font-size: 100px;
+    padding-top: 18%;
+}
+#Start {
+    text-align: center;
+    padding-top: 20px;
+}
+#StartBtn {
+    padding: 15px 70px;
+    font-size: xx-large;
+    background-color: black;
+    border:2px solid seagreen;
+    color: White;
+}
+
+body{
+    background-image: url(https://4.imimg.com/data4/YB/PE/MY-27725998/black-slate-slab.jpg);
+    background-color: rgb(40, 40, 40);
+    background-size: cover;
+    background-position: center center;
+}
+.card{
+    background-color: whitesmoke;
+    height:100%;
+    width:80%;
+    margin-left: 10%;
+}
+
+#new_molecule {
+    text-align: center;
+    padding-top: 5%;
+    padding-bottom: 5%;
+}
