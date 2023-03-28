@@ -36,7 +36,7 @@ function mole_load(name)
     df = DataFrame(CSV.File(joinpath(@__DIR__, "molecules.csv")))
     for row in eachrow(df)
         if name == row["Name"]
-            out = moleGrid(this.name = row["Name"], dco = row["Diffusion"], structure = row["Structure"])
+            out = moleGrid(name = row["Name"], dco = row["Diffusion"], structure = row["Structure"], arr= zeros(Int16,10000,10000))
             return out
         end
     end

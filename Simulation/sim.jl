@@ -15,6 +15,7 @@ function Simulation(settings, microbe)
     microbesSize=1
     moles
     molesSize=1
+    micro_grid = zeros(Int8,10000,10000)
 
 
 # -1 return is to catch a DNE error
@@ -37,7 +38,7 @@ function Simulation(settings, microbe)
                 continue
             end
             moles[molesSize] = mole_load(value.food[i])
-            if mole[index*i] == -1
+            if moles[molesSize] == -1
                 return -1
             end
             molesSize+=1
@@ -47,14 +48,24 @@ function Simulation(settings, microbe)
                 continue
             end
             moles[molesSize] = mole_load(value.excrement[i])
-            if mole[index*i] == -1
+            if moles[molesSize] == -1
                 return -1
             end
             molesSize+=1
         end
     end
     for v in startmoles
-        moles[molesSize] = v
+        moles[molesSize] = mole_load(v)
+        if moles[molesSize] ==-1
+            return -1
+        end
+        moles[moleSize].arr= fill(20000)
+        molesSize+=1
+    end
+
+
+    for time in range (1,deltaT, 1000000)
+
         
 
 end

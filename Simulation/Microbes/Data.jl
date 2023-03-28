@@ -41,9 +41,11 @@ function micro_load(name)
                 list = open(readdlm, joinpath(@__DIR__, "Memory/$name.txt"))
                 
                 food = split(list[5],"}")
+                food = split(food[2], ", ")
                 excrement = split(list[6],"}")
+                excrement = split(excrement[2], ", ")
 
-                out = cell(name=list[1],size=parse(Int, list[2]), ph=parse(Float16,list[3]), vph= parse(Float16, list[4]), this.food=food, this.excrement=excrement)
+                out = cell(name=list[1],size=parse(Int, list[2]), ph=parse(Float16,list[3]), vph= parse(Float16, list[4]), food=food, excrement=excrement)
                 return out
             end
         end
