@@ -1,6 +1,10 @@
 Microbe 
  0 
- 7 
- 0 
- SubString{String}["Null", "Null", "Null"] 
- SubString{String}["Null", "Null", "Null"]
+ 7.0 
+ 0.0 
+Null 
+Null 
+Null 
+Null 
+Null 
+Null 

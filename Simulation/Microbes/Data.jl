@@ -29,7 +29,13 @@ function micro_save(params)
         close(f)
     end
         open(joinpath(@__DIR__, "Memory/$name.txt"), "w") do f
-            write(f, "$name \n $size \n $ph \n $vph \n $food \n $excrement")
+            write(f, "$name \n $size \n $ph \n $vph \n")
+            for val in food
+                write(f, "$val \n")
+            end
+            for val in excrement
+                write(f, "$val \n")
+            end
         end
 end
 
@@ -40,12 +46,10 @@ function micro_load(name)
             if "$name" == readline(f)
                 list = open(readdlm, joinpath(@__DIR__, "Memory/$name.txt"))
                 
-                food = split(list[5],"}")
-                food = split(food[2], ", ")
-                excrement = split(list[6],"}")
-                excrement = split(excrement[2], ", ")
+                food = [list[5], list[6], list[7]]
+                excrement = [list[8], list[9], list[10]]
 
-                out = cell(name=list[1],size=parse(Int, list[2]), ph=parse(Float16,list[3]), vph= parse(Float16, list[4]), food=food, excrement=excrement)
+                out = cell(name=list[1],size=parse(Int, list[2]), ph=parse(Float16,list[3]), vph= parse(Float16, list[4]), food=food, excrement=excrement, condition=100, time=0)
                 return out
             end
         end

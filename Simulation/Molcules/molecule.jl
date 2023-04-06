@@ -6,12 +6,23 @@ struct moleGrid
     total
     arr
     structure
+    factor
 
 end
 
-function updateMolecule(grid::moleGrid,deltaT)
-    change = floor(dCo*deltaT*1000/3)
+function changeFactor(grid::moleGrid)
     for num in eachindex(grid.arr)
+        num= num/2
+    end
+    grid.factor=grid.factor*2
+end
+
+function updateMolecule(grid::moleGrid,deltaT)
+    change = floor(dCo*deltaT)
+    for num in eachindex(grid.arr)
+        if num > 20000
+            changeFactor(grid)
+        end
         distrubution = floor(grid.arr[floor(num/10000)+1,floor(num%10000)+1]/(1+2(change))^2)
         if distrubution == 0
             continue

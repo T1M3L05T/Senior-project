@@ -1,6 +1,7 @@
 using Blink
 include(joinpath(@__DIR__, "Simulation/Molcules/Data.jl"))
 include(joinpath(@__DIR__, "Simulation/Microbes/Data.jl"))
+include(joinpath(@__DIR__, "Simulation/Sim.jl"))
 
 
 w = Window()
@@ -59,3 +60,12 @@ handle(w, "save_micro") do args
     end
     body!(w, f)
 end
+handle(w,"run") do args
+    params = split(args,"::")
+    setting = split(params[1],",")
+    micros = split(params[2],",")
+    Simulation(settings,micros)
+    f = open("out/app.html") do file
+        read(file, String)
+    end
+    body!(w, f)
