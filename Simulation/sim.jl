@@ -10,10 +10,10 @@ function Simulation(settings, microbe)
     capT = parse(Int, settings[2])
     size =  parse(Int, settings[3])
     evar = parse(Int, settings[4])
-    startmoles = settings[5]
-    microbes
+    #startmoles = settings[5]
+    microbes=[]
     microbesSize=1
-    moles
+    moles=[]
     molesSize=1
     micro_grid = zeros(Int8,size,size)
 
@@ -21,14 +21,14 @@ function Simulation(settings, microbe)
 # -1 return is to catch a DNE error
     #loading microbes from hdd into main memory
     for value in microbe
-        if value == "NULL"
+        if value == "None"
             continue
+        else
+            push!(microbes,micro_load(value))
         end
-        microbes[microbesSize] = micro_load(value)
         if microbes[microbesSize] == -1
             return -1
         end
-        microbesSize+=1
     end
     #loading molcules from hdd into main memory
     #using microbes loaded to get food and excrement  
@@ -37,7 +37,7 @@ function Simulation(settings, microbe)
             if value.food[i] == "NULL"
                 continue
             end
-            moles[molesSize] = mole_load(value.food[i])
+            push!(moles,mole_load(value.food[i]))
             if moles[molesSize] == -1
                 return -1
             end
@@ -47,7 +47,7 @@ function Simulation(settings, microbe)
             if value.excrement[i] == "NULL"
                 continue
             end
-            moles[molesSize] = mole_load(value.excrement[i])
+            push!(moles, mole_load(value.excrement[i]))
             if moles[molesSize] == -1
                 return -1
             end
@@ -57,7 +57,7 @@ function Simulation(settings, microbe)
 
     #this is to fill in a mole grid for input molesules
     for v in startmoles
-        moles[molesSize] = mole_load(v)
+        push!(moles, mole_load(v))
         if moles[molesSize] ==-1
             return -1
         end
@@ -66,7 +66,7 @@ function Simulation(settings, microbe)
     end
 
 #actual simulation calulations
-    for time in range (1,deltaT, 1000000)
+    for time in range(1,deltaT, 1000000)
         capture=0
         for (l,m) in enumerate(eachindex(micro_grid))
             if m==0

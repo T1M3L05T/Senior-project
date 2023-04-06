@@ -60,12 +60,15 @@ handle(w, "save_micro") do args
     end
     body!(w, f)
 end
-handle(w,"run") do args
+
+handle(w,"simulate") do args
     params = split(args,"::")
-    setting = split(params[1],",")
+    settings = split(params[1],",")
     micros = split(params[2],",")
     Simulation(settings,micros)
-    f = open("out/app.html") do file
+   
+    f = open("ui/out.html") do file
         read(file, String)
     end
     body!(w, f)
+end

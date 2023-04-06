@@ -12,7 +12,7 @@
             var capT = document.getElementById("dataT").value;
             var size = document.getElementById("size").value;
             var vari = document.getElementById("vari").value;
-            Blink.msg("run", calcT + "," + capT + "," + size + "," + vari+ "::", m1 + "," + m2);
+            Blink.msg("simulate", calcT + "," + capT + "," + size + "," + vari+ "::", m1 + "," + m2);
         }
     </script>
     <body>
@@ -29,7 +29,9 @@
                     <option value="None">None</option>
                 </select><br><br>
                 <label for="m2">Microbe 2</label><br>
-                <select id="m2" name="m2"> </select><br><br>
+                <select id="m2" name="m2"> 
+                    <option vaule="None">None</option>
+                </select><br><br>
                 <label for="calcT">Calculation time</label><br>
                 <input type="text" id="calcT" name="calcT" value="5">s/update<br>
                 how often the program runs calculation. smaller will be more accurate, larger will run faster<br><br>
