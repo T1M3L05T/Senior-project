@@ -15,7 +15,7 @@ function Simulation(settings, microbe)
     microbesSize=1
     moles
     molesSize=1
-    micro_grid = zeros(Int8,10000,10000)
+    micro_grid = zeros(Int8,size,size)
 
 
 # -1 return is to catch a DNE error
@@ -54,6 +54,8 @@ function Simulation(settings, microbe)
             molesSize+=1
         end
     end
+
+    #this is to fill in a mole grid for input molesules
     for v in startmoles
         moles[molesSize] = mole_load(v)
         if moles[molesSize] ==-1
@@ -63,9 +65,26 @@ function Simulation(settings, microbe)
         molesSize+=1
     end
 
-
+#actual simulation calulations
     for time in range (1,deltaT, 1000000)
-
-        
-
+        capture=0
+        for (l,m) in enumerate(eachindex(micro_grid))
+            if m==0
+                continue
+            else
+                update_cell(m,deltaT,moles,l/size,l%size,evar)
+            end
+        end
+        for m in moles
+            updateMolecule(m,deltaT)
+        end
+        #this is to save imgs of the micro_grid
+        if capture == time%capture
+            continue
+        else
+            capture = time%capture
+            img = colorview(RGB, micro_grid / 255)
+            savefig(img,"out"*capture*".png")
+        end
+    end
 end
