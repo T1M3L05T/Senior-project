@@ -22,12 +22,12 @@ function mole_save(params)
             mole_exists = true
             row["Mass"] = mass
             row["Diffusion"] = diff
-            row["Structure"] = structure
+            row["Structure"] = "$structure"
             break
         end
     end
     if !mole_exists
-        push!(df, (name, mass, diff, structure))
+        push!(df, [name, mass, diff, structure])
     end
     CSV.write(joinpath(@__DIR__, "molecules.csv"), df)
 end
@@ -36,10 +36,20 @@ function mole_load(name)
     df = DataFrame(CSV.File(joinpath(@__DIR__, "molecules.csv")))
     for row in eachrow(df)
         if name == row["Name"]
-            out = moleGrid(name = row["Name"], dco = row["Diffusion"]*1000/3, structure = row["Structure"], arr= zeros(Int16,10000,10000), factor=1)
-            return out
+            #out = moleGrid(row["Name"], row["Diffusion"] * 1000 / 3, 0, zeros(Int16, 10000, 10000), row["Structure"], 1)
+            return  moleGrid(row["Name"], row["Diffusion"] * 1000 / 3, 0, zeros(Int16, 10000, 10000), row["Structure"], 1)
         end
     end
     return -1
-    
+
+end
+
+function mole_list()
+    df = DataFrame(CSV.File(joinpath(@__DIR__, "molecules.csv")))
+    list = []
+    for row in eachrow(df)
+        push!(list, row["Name"])
+    end
+    sort!(list)
+    return list
 end

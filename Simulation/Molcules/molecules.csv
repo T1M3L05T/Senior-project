@@ -1,4 +1,10 @@
 Name,Mass,Diffusion,Structure
-Hydrogen,1,5.11,H
-Oxygen,16,2.42,O
+Hydrogen,1,4.5,H
+Oxygen,16,2.0,O
 Molecule,0,0.0,0
+Glucose,180,0.67,C6H12O6
+Ammonium Ion,18,1.97,NH4
+Carbon Dioxide,44,1.92,CO2
+Accetate,60,1.21,C2H3O2
+Nitrate,62,1.7,NO3
+Ammonium,17,1.8,NH3

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<script>
+    function showData(moles,img){
+        const table = document.getElementById("moles");
+        moles.foreach(item => {
+            let row = table.insertRow();
+            let name = row.insertCell(0);
+            date.innerHTML = item[0];
+            let count = row.insertCell(1);
+            name.innerHTML = item[1];
+        });
+        document.getElementById("graph").style.backgroundImage = "url(out.png)";
+    }
+</script>
+
+<head>
+    <link rel="stylesheet" href="app.css">
+</head>
+
+<body>
+    
+    <h1>Results</h1>
+    <button onclick='Blink.msg("link", "Microbe")'>Add Microbe</button>
+    <button onclick='Blink.msg("link", "Molecule")'>Add Molecule</button>
+    <button onclick='Blink.msg("link", "Sim")'>Simulation</button>
+    <div id="Output" class="card">
+        <table id="moles"></table>
+        <div id="graph"></div>
+        Simlation success
+    </div>
+</body>
+</body>
+
+</html>
