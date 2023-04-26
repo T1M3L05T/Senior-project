@@ -32,6 +32,7 @@ handle(w, "link") do args
         for val in list
             f = f * "<script> populate_mole('$val'); </script>"
         end
+        body!(w, f)
 
     elseif args == "Microbe"
         f = open("ui/newMicrobe.html") do file
@@ -42,14 +43,16 @@ handle(w, "link") do args
         for val in list
             f = f * "<script> populate_mole('$val'); </script>"
         end
+        body!(w, f)
 
     elseif args == "Molecule"
         f = open("ui/newMolecule.html") do file
             read(file, String)
         end
+        body!(w, f)
 
     end
-    body!(w, f)
+    
 end
 
 #save functions
@@ -99,10 +102,10 @@ handle(w, "simulate") do args
     params = split(args, "::")
     settings = split(params[1], ",")
     micros = split(params[2], ",")
-    startmoles = ["Glucose","Nitrate"]
+    startmoles = split(params[3],",")
     pcount = Simulation(settings, micros, startmoles)
     
-    f = open("ui/output/out-1.html") do file
+    f = open("ui/out-1.html") do file
         read(file, String)
     end
     body!(w, f)

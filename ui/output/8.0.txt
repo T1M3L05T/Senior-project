@@ -1,0 +1,10 @@
+Glucose=96000000000000
+Hydrogen=0
+Nitrate=96000000000000
+Carbon Dioxide=0
+Ammonium Ion=0
+Accetate=0
+Ammonium=0
+
+
+Algae , -170.0, 270, 0.0, 389, 74

@@ -32,15 +32,17 @@ function mole_save(params)
     CSV.write(joinpath(@__DIR__, "molecules.csv"), df)
 end
 
-function mole_load(name)
+function mole_load(name,size)
+    if name=="None"
+        return
+    end
     df = DataFrame(CSV.File(joinpath(@__DIR__, "molecules.csv")))
     for row in eachrow(df)
         if name == row["Name"]
-            #out = moleGrid(row["Name"], row["Diffusion"] * 1000 / 3, 0, zeros(Int16, 10000, 10000), row["Structure"], 1)
-            return  moleGrid(row["Name"], row["Diffusion"] * 1000 / 3, 0, zeros(Int16, 10000, 10000), row["Structure"], 1)
+            return  moleGrid(row["Name"], row["Diffusion"] * 1000 / 3, 0, zeros(Int16, size, size), row["Structure"], 1)
         end
     end
-    return -1
+    return
 
 end
 

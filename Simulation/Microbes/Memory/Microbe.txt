@@ -1,10 +1,10 @@
 Microbe 
- 0 
- 7.0 
- 0.0 
-Null 
-Null 
-Null 
-Null 
-Null 
-Null 
+0 
+7.0 
+0.0 
+Null
+Null
+Null
+Null
+Null
+Null

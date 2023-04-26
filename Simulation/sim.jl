@@ -5,6 +5,7 @@ include(joinpath(@__DIR__, "Molcules/Data.jl"))
 include(joinpath(@__DIR__, "Microbes/Data.jl"))
 include(joinpath(@__DIR__, "results.jl"))
 using Random
+using .Threads
 
 
 function Simulation(settings, microbes, startmoles)
@@ -12,110 +13,139 @@ function Simulation(settings, microbes, startmoles)
     capT = parse(Int, settings[2])
     size = parse(Int, settings[3])
     evar = parse(Int, settings[4])
-    microb = []
+    initmicrob = []
     moles = Dict()
-
-    micro_grid = arr = Array{microbe,2}(undef,size,size)
-    for i in range(1,size)
-        for j in range(1,size)
-            micro_grid[i,j]= micro_load()
-        end
-    end
+    micro_grid = []
+    # micro_grid = arr = Array{microbe,2}(undef,size,size)
+    # @threads for i in range(1,size)
+    #     @threads for j in range(1,size)
+    #         micro_grid[i,j]= micro_load("None")
+    #     end
+    # end
 
     function born(in, x, y)
-        for i in range(1:10000)
-            j = 0
-            while j <= i
-                if micro_grid[x+i, y+j] == 0
-                    micro_grid[x+i, y+j] = micro_load(in)
-                    return
-                elseif micro_grid[x+i, y-j] == 0
-                    micro_grid[x+i, y-j] = micro_load(in)
-                    return
-                elseif micro_grin[x-j, y+i] == 0
-                    micro_grid[x-j, y+i] = micro_load(in)
-                    return
-                elseif micro_grin[x-j, y-i] == 0
-                    micro_grid[x+j, y+i] = micro_load(in)
-                    return
-                end
+
+        for i in initmicrob
+            if in == i.name
+                push!(microgrid, deepcopy(initmicrob[i]))
             end
         end
+        last(micro_grid).x = parse(Int,rand(1:size))
+        last(micro_grid).y = parse(Int,rand(1:size))
+
+        # for i in range(1:1000)
+        #     j = 0
+        #     while j <= i
+        #         if micro_grid[x+i, y+j] == 0
+        #             micro_grid[x+i, y+j] = micro_load(in)
+        #             return
+        #         elseif micro_grid[x+i, y-j] == 0
+        #             micro_grid[x+i, y-j] = micro_load(in)
+        #             return
+        #         elseif micro_grin[x-j, y+i] == 0
+        #             micro_grid[x-j, y+i] = micro_load(in)
+        #             return
+        #         elseif micro_grin[x-j, y-i] == 0
+        #             micro_grid[x+j, y+i] = micro_load(in)
+        #             return
+        #         end
+        #         j+=1
+        #     end
+        # end
     end
 
     #loading microbes from memory
     for value in microbes
         if value != "None"
-            push!(microb, micro_load(value))
+            push!(initmicrob, micro_load(value))
         end
+    end
+    if isempty(initmicrob)
+        return
     end
     #loading molcules from hdd into main memory
     #using microbes loaded to get food and excrement  
-    for value in microb
-        if value == "None" || value == -1
+    for value in initmicrob
+
+        if value.name == "None" || value.name == 0
             continue
         end
         for i in value.food
-            if i == "None" || i==0
+            if i == "None" || i == 0
                 continue
             end
-            if !haskey(moles, value)
-                push!(moles, value => mole_load(i))
+            if !haskey(moles, i)
+                push!(moles, i => mole_load(i,size))
             end
         end
         for i in value.excrement
-            if i == "None" || i ==0
+            if i == "None" || i == 0
                 continue
             end
-            if !haskey(moles, value)
-                push!(moles, mole_load(i))
+            if !haskey(moles, i)
+                push!(moles, i => mole_load(i,size))
             end
         end
     end
 
     #this is to fill in a mole grid for input molecules
     for v in startmoles
-
-        if !haskey(moles, v)
-            push!(moles, v => mole_load(v))
+        if v == "None"
+            continue
         end
-        moles[v].arr = fill(20000)
+        if !haskey(moles, v)
+            push!(moles, v => mole_load(v,size))
+        end
+        moles[v].arr = fill(15000,(size,size))
         moles[v].factor = 64
+        moles[v].total = 15000 * 10000^2
     end
 
     #random micro_grid assignments
-    for mics in microbes
-        for i in range(1,rand(50:500))
-            micro_grid[rand(1:10000), rand(1:10000)] = micro_load(mics)
+    for l in initmicrob
+        for i in range(1, rand(50:500))
+            push!(micro_grid, deepcopy(l))
+            micro_grid[i].x = rand(1:size)
+            micro_grid[i].y = rand(1:size)
         end
     end
-
+    capture = 0
     #actual simulation calulations
-    for time in range(1, deltaT, 1000000)
+    for time in 0:deltaT:10000
+        println(time)
         capture = 0
-        for (l, m) in enumerate(micro_grid)
-
+        count=1
+        for m in micro_grid
+            count+=1
+            l = m.x
+            q = m.y
             env = 0
-            if m.name != 0
-                env = update_cell(m, deltaT, moles, l // size, l % size, evar)
+            if m.name != "0"
+                env = update_cell(m, deltaT, moles, l, q, evar)
             end
             if env == "Die"
-                m = micro_load()
+                deleteat!(micro_grid, count)
+                count-=1
             elseif env == "Birth"
-                born(m.name, l // size, l % size)
+                born(m.name, l, q)
             end
         end
-        for m in values(moles)
-            updateMolecule(m, deltaT)
+        if isempty(micro_grid)
+            return
         end
-        balance(moles)
+        println("cell complete")
+        @threads for m in collect(values(moles))
+            updateMolecule(m, deltaT, size)
+        end
+        println("Diffusion complete")
+        balance(moles,size)
+        println("Chemistry")
         #this is to save imgs of the micro_grid
-        capture=0
         if capture == floor(time / capT)
             continue
         else
             capture = floor(time / capT)
-            resultSave(capure, micro_grid, moles)
+            resultSave(capture, micro_grid, moles)
 
         end
     end

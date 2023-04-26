@@ -29,42 +29,18 @@ function micro_save(params)
         close(f)
     end
     open(joinpath(@__DIR__, "Memory/$name.txt"), "w") do f
-        write(f, "$name \n $size \n $ph \n $vph \n")
+        write(f, "$name\n$size\n$ph\n $vph\n")
         for val in food
-            write(f, "$val \n")
+            write(f, "$val\n")
         end
         for val in excrement
-            write(f, "$val \n")
+            write(f, "$val\n")
         end
     end
 end
 
-function micro_load()
-    return microbe(0,0,0,0,0,0,0,0,0)
-end
 
-function micro_load(name)
 
-    open(joinpath(@__DIR__, "Memory/index.txt")) do f
-        while !eof(f)
-            if "$name" == readline(f)
-                list = []
-                open(joinpath(@__DIR__, "Memory/$name.txt")) do r
-                    while !eof(r)
-                        push!(list, readline(r))
-                    end
-                end
-                food = [list[5], list[6], list[7]]
-                excrement = [list[8], list[9], list[10]]
-                out = -1
-                list
-                out = microbe(list[1], parse(Int, list[2]), parse(Float16, list[3]), parse(Float16, list[4]), food, excrement, 100, 0, 0)
-                return out
-            end
-        end
-    end
-    return microbe(0,0,0,0,0,0,0,0,0)
-end
 
 function micro_list()
 
@@ -76,4 +52,29 @@ function micro_list()
     end
     sort!(list)
     return list
+end
+
+function micro_load(name)
+    if name =="None"
+        return microbe(0,0,0,0,0,0,0,0,0)
+    end
+    list = micro_list()
+    params =[]
+    if name in list
+        open(joinpath(@__DIR__, "Memory/$name.txt")) do f
+            while !eof(f)
+                push!(params,readline(f))
+            end
+        end
+    
+        food = [params[5],params[6],params[7]]
+        filter!(e->e!="None",food)
+        excret = [params[8],params[9],params[10]]
+        filter!(e->e!="None",excret)
+        return microbe(params[1],parse(Int8,params[2]),parse(Float16,params[3]),parse(Float16,params[4]),food,excret,100,0,0,1,1)
+    else
+        return microbe(0,0,0,0,0,0,0,0,0)
+    end
+
+    
 end
