@@ -73,7 +73,7 @@ function micro_load(name)
         filter!(e->e!="None",excret)
         return microbe(params[1],parse(Int8,params[2]),parse(Float16,params[3]),parse(Float16,params[4]),food,excret,100,0,0,1,1)
     else
-        return microbe(0,0,0,0,0,0,0,0,0)
+        return
     end
 
     

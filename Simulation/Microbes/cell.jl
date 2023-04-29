@@ -9,44 +9,53 @@ mutable struct microbe
     vph::Float16
     food
     excrement
-    condition::Float16
+    condition::Float64
     life::Int16
-    mass::Float16
+    mass::Float32
     x::Int16
     y::Int16
 
 end
 
-function update_cell(cell::microbe, deltaT, moles, x, y, var)
+function update_cell(cell::microbe, deltaT, moles, var)
 
+    x=cell.x
+    y=cell.y
     proxyph = ph_check(moles, x, y)
+    println(proxyph)
     growthfactor = abs((proxyph - cell.ph) / sqrt(cell.vph / 2))
     growthfactor = exp(-growthfactor)
-    rintake = 0
+    rintake::BigFloat = 0
     for i in cell.food
         if i=="None" || i==0
             continue
         end
         #cellular respiration
         if i == "Glucose" || i == "Carbon Dioxide"
-            if cell.condition < 100
-                rintake = growthfactor * moles[i].dCo * moles[i].arr[x, y] * deltaT * ((1 - (var / 200)) + rand() * var / 100)
+            if cell.condition <= 100
+                rintake =  moles[i].arr[x, y] 
+                rintake *= ((1 - (var / 200)) + rand() * var / 100)
+                rintake *= growthfactor/moles[i].dCo
+                rintake = floor(rintake)
                 moles[i].arr[x, y] -= rintake
                 moles[i].total-=rintake
                 rintake *= moles[i].factor
                 atp = rintake * 38
                 atp = atp / (10000 * deltaT)
                 cell.condition += atp
+                cell.mass += rintake/1000000
             end
 
         else
             #nutrients for growth/reproduction
             if cell.condition > 50 && cell.mass < 100
-                intake = growthfactor * moles[i].dCo * moles[i].arr[x, y] * deltaT * ((1 - (var / 200)) + rand() * var / 100)
+                intake::BigFloat =  moles[i].arr[x, y]
+                intake *= growthfactor / moles[i].dCo
+                intake *=  ((1 - (var / 200)) + rand() * var / 100)
+                intake = floor(intake)
                 moles[i].arr[x, y] -= intake
                 moles[i].total-=intake
-                cell.mass += intake*moles[i].factor / 1000000
-                cell.condition -= intake*moles[i].factor / 4000000
+                cell.mass += intake*moles[i].factor / 10000
             end
         end
     end
@@ -57,36 +66,30 @@ function update_cell(cell::microbe, deltaT, moles, x, y, var)
         end
         if i == "Carbon Dioxide"
             out = rintake * 6
-            moles[i].arr[x, y] += out / moles[i].factor
+            moles[i].arr[x, y] += floor(out / moles[i].factor)
             moles[i].total+=out/moles[i].factor
         else
-            out = rintake * ((.5 - (var / 200)) + rand() * var / 100)
-            moles[i].arr[x, y] += out / moles[i].factor
-            moles[i].total+=out/moles[i].factor
-            cell.mass -=out/2
+            out = floor(rintake * ((1 - (var / 200)) + rand() * var / 100)/moles[i].dCo)
+            moles[i].arr[x, y] += floor(out / moles[i].factor)
+            moles[i].total+= floor(out/moles[i].factor)
         end
     end
 
     #updating energy consuption and checking for death
-    cell.condition -= (1 * deltaT)
+    cell.condition -= (.1*deltaT)
     cell.life += deltaT
-    if cell.condition <= 0
-        return "Die"
-    end
 
-    if cell.condition > 100
-        cell.condition = 100
-    elseif cell.condition < 0
+    if cell.condition < 0
         return "Die"
     else
-        death = ((1 - (var / 200)) + rand() * var / 100) * (100 / cell.condition) - 1 * (cell.life / 20000)
+        death = ((1 - (var / 200)) + rand() * var / 100) * exp((cell.condition/100)-1) * (cell.life / 50000)
         if death >= 1
             return "Die"
         end
     end
 
     #birth conditions
-    birth = ((1 - (var / 200)) + rand() * var / 100) * (cell.condition / 100) * (mass / 100)
+    birth = ((1 - (var / 200)) + rand() * var / 100) * (cell.condition / 100) * (cell.mass / 100)
     if birth >= 1
         cell.mass=0
         return "Birth"

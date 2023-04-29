@@ -25,13 +25,13 @@ function Simulation(settings, microbes, startmoles)
 
     function born(in, x, y)
 
-        for i in initmicrob
-            if in == i.name
-                push!(microgrid, deepcopy(initmicrob[i]))
+        for (i,m) in enumerate(initmicrob)
+            if in == m.name
+                push!(micro_grid, deepcopy(initmicrob[i]))
             end
         end
-        last(micro_grid).x = parse(Int,rand(1:size))
-        last(micro_grid).y = parse(Int,rand(1:size))
+        last(micro_grid).x = rand(1:size)
+        last(micro_grid).y = rand(1:size)
 
         # for i in range(1:1000)
         #     j = 0
@@ -96,17 +96,19 @@ function Simulation(settings, microbes, startmoles)
         if !haskey(moles, v)
             push!(moles, v => mole_load(v,size))
         end
-        moles[v].arr = fill(15000,(size,size))
-        moles[v].factor = 64
-        moles[v].total = 15000 * 10000^2
+        moles[v].arr = fill(1500000,(size,size))
+        moles[v].factor = 100
+        moles[v].total = 1500000 * 100^2
     end
 
     #random micro_grid assignments
-    for l in initmicrob
-        for i in range(1, rand(50:500))
-            push!(micro_grid, deepcopy(l))
-            micro_grid[i].x = rand(1:size)
-            micro_grid[i].y = rand(1:size)
+    for m in initmicrob
+        count=0
+        for i in range(1, rand(10:(size/10)))
+            count +=1
+            push!(micro_grid, deepcopy(m))
+            micro_grid[count].x = rand(1:size)
+            micro_grid[count].y = rand(1:size)
         end
     end
     capture = 0
@@ -114,14 +116,14 @@ function Simulation(settings, microbes, startmoles)
     for time in 0:deltaT:10000
         println(time)
         capture = 0
-        count=1
+        count=0
         for m in micro_grid
             count+=1
             l = m.x
             q = m.y
             env = 0
             if m.name != "0"
-                env = update_cell(m, deltaT, moles, l, q, evar)
+                env = update_cell(m, deltaT, moles, evar)
             end
             if env == "Die"
                 deleteat!(micro_grid, count)
@@ -137,7 +139,6 @@ function Simulation(settings, microbes, startmoles)
         @threads for m in collect(values(moles))
             updateMolecule(m, deltaT, size)
         end
-        println("Diffusion complete")
         balance(moles,size)
         println("Chemistry")
         #this is to save imgs of the micro_grid
