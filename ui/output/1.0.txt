@@ -1,1 +1,0 @@
-:Hydrogen=3895:Nitrate=0:Carbon Dioxide=1499995307500:Ammonium Ion=3895:Ammonium=3895::Algae, -9.206000000000003, 1230, 0.1089, 476, 448:

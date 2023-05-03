@@ -1,6 +1,6 @@
 Name,Mass,Diffusion,Structure
 Hydrogen,1,4.5,H
-Oxygen,16,2.0,O
+Oxygen,16,2.5,O2
 Molecule,0,0.0,0
 Glucose,180,0.67,C6H12O6
 Ammonium Ion,18,1.97,NH4

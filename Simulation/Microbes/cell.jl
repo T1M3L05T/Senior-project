@@ -22,8 +22,7 @@ function update_cell(cell::microbe, deltaT, moles, var)
     x=cell.x
     y=cell.y
     proxyph = ph_check(moles, x, y)
-    println(proxyph)
-    growthfactor = abs((proxyph - cell.ph) / sqrt(cell.vph / 2))
+    growthfactor = abs((proxyph - cell.ph) / sqrt(cell.vph))
     growthfactor = exp(-growthfactor)
     rintake::BigFloat = 0
     for i in cell.food
@@ -31,16 +30,32 @@ function update_cell(cell::microbe, deltaT, moles, var)
             continue
         end
         #cellular respiration
-        if i == "Glucose" || i == "Carbon Dioxide"
+        if i == "Glucose"
             if cell.condition <= 100
                 rintake =  moles[i].arr[x, y] 
                 rintake *= ((1 - (var / 200)) + rand() * var / 100)
-                rintake *= growthfactor/moles[i].dCo
+                rintake *= growthfactor
+                rintake /= moles[i].dCo
                 rintake = floor(rintake)
                 moles[i].arr[x, y] -= rintake
                 moles[i].total-=rintake
                 rintake *= moles[i].factor
                 atp = rintake * 38
+                atp = atp / (10000 * deltaT)
+                cell.condition += atp
+                cell.mass += rintake/1000000
+            end
+        elseif  i == "Carbon Dioxide"
+            if cell.condition <= 100
+                rintake =  moles[i].arr[x, y] 
+                rintake *= ((1 - (var / 200)) + rand() * var / 100)
+                rintake *= growthfactor
+                rintake /= moles[i].dCo
+                rintake = floor(rintake)
+                moles[i].arr[x, y] -= rintake
+                moles[i].total-=rintake
+                rintake *= moles[i].factor
+                atp = floor(rintake * 38 /6)
                 atp = atp / (10000 * deltaT)
                 cell.condition += atp
                 cell.mass += rintake/1000000
@@ -67,11 +82,11 @@ function update_cell(cell::microbe, deltaT, moles, var)
         if i == "Carbon Dioxide"
             out = rintake * 6
             moles[i].arr[x, y] += floor(out / moles[i].factor)
-            moles[i].total+=out/moles[i].factor
+            moles[i].total+=floor(out)
         else
             out = floor(rintake * ((1 - (var / 200)) + rand() * var / 100)/moles[i].dCo)
             moles[i].arr[x, y] += floor(out / moles[i].factor)
-            moles[i].total+= floor(out/moles[i].factor)
+            moles[i].total+= floor(out)
         end
     end
 
@@ -82,7 +97,7 @@ function update_cell(cell::microbe, deltaT, moles, var)
     if cell.condition < 0
         return "Die"
     else
-        death = ((1 - (var / 200)) + rand() * var / 100) * exp((cell.condition/100)-1) * (cell.life / 50000)
+        death = ((1 - (var / 200)) + rand() * var / 100) * exp(-(cell.condition/100)) * (cell.life / 50000)
         if death >= 1
             return "Die"
         end

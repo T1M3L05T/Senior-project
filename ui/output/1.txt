@@ -1,0 +1,10 @@
+Glucose=149999262200
+Hydrogen=0
+Nitrate=149999750700
+Carbon Dioxide=4426800
+Ammonium Ion=0
+Accetate=1887
+Ammonium=0
+::
+'Algae', 7.0, 930, 24.929998, 9, 11
+'Yeast', 100.45466666666667, 930, 0.7378, 1, 1

@@ -13,12 +13,12 @@ function resultSave(capture, micro_grid, moles)
     open("$fp$capture.txt", "w") do f
 
         for m in values(moles)
-            write(f, string(":$(m.name)=$(m.total*m.factor)" ))
+            write(f, string("$(m.name)=$(m.total*m.factor)\n" ))
         end
-        write(f,"::")
+        write(f,"::\n")
 
         for m in micro_grid
-            write(f, string("$(m.name), $(m.condition), $(m.life), $(m.mass), $(m.x), $(m.y):"))
+            write(f, string("'$(m.name)', $(m.condition), $(m.life), $(m.mass), $(m.x), $(m.y)\n"))
         end
 
         #write(f, micro_grid)

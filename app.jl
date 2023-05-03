@@ -3,13 +3,14 @@ include(joinpath(@__DIR__, "Simulation/Molcules/Data.jl"))
 include(joinpath(@__DIR__, "Simulation/Microbes/Data.jl"))
 include(joinpath(@__DIR__, "Simulation/Sim.jl"))
 
+    
 
 #ui varibles needed to pass to js
 pcount = 0 #keeps track of how many output DataFrames
-cp = -1 #keeps track of the current output being viewed
+cp = 0 #keeps track of the current output being viewed
 
 w = Window()
-f = open(joinpath(@__DIR__,"ui/start.html")) do file
+f = open(joinpath(@__DIR__, "ui/start.html")) do file
     read(file, String)
 end
 load!(w, joinpath(@__DIR__, "ui/app.css"))
@@ -52,7 +53,7 @@ handle(w, "link") do args
         body!(w, f)
 
     end
-    
+
 end
 
 #save functions
@@ -102,23 +103,148 @@ handle(w, "simulate") do args
     params = split(args, "::")
     settings = split(params[1], ",")
     micros = split(params[2], ",")
-    startmoles = split(params[3],",")
-    pcount::float = Simulation(settings, micros, startmoles)
-    
-    f = open(joinpath(@__DIR__, "ui/out-1.html")) do file
-        read(file, String)
+    startmoles = split(params[3], ",")
+    pcount = Simulation(settings, micros, startmoles)
+    cp = pcount
+    println(cp)
+
+    if pcount == 0
+        f = open(joinpath(@__DIR__, "ui/out-1.html")) do file
+            read(file, String)
+        end
+    else
+
+
+        f = open(joinpath(@__DIR__, "ui/out-1.html")) do file
+            read(file, String)
+        end
+
+        d = open(joinpath(@__DIR__, "ui/output/$(pcount).txt")) do file
+            inlines = readlines(file)
+            molec = true
+            for m in inlines
+                if m == "::"
+                    molec = false
+                    continue
+                end
+                if molec
+                    pop = split(m, "=")
+                    f *= "<script> addMole('$(pop[1])', $(pop[2])) </script>"
+                else
+                    f *= "<script> addMicro($m) </script>"
+                end
+            end
+
+        end
+
     end
-
-    d = open(joinpath(@__DIR__, "ui/output/$pcount.txt")) do file
-        read(file, String)
-    end
-    array = split(d,"::")
-    molecules = split(array[1],":")
-    organisms = split(array[2],":")
-
-    for m in molecules
-        f = f * "$molecules"
-
+    f*= "<script> page = '$cp/$pcount';"
     body!(w, f)
+end
+
+handle(w, "page change") do args
+    args = split(args," ")
+    page = split(args[2],"/")
+    cp = parse(Int,page[1])
+    pcount = parse(Int,page[2])
+    args = args[1]
+    if args == "back"
+        if cp - 1 < 0
+            f = open(joinpath(@__DIR__, "ui/out-1.html")) do file
+                read(file, String)
+            end
+
+            d = open(joinpath(@__DIR__, "ui/output/$(cp).txt")) do file
+                inlines = readlines(file)
+                molec = true
+                for m in inlines
+                    if m == "::"
+                        molec = false
+                        continue
+                    end
+                    if molec
+                        pop = split(m, "=")
+                        f *= "<script> addMole('$(pop[1])', $(pop[2])) </script>"
+                    else
+                        f *= "<script> addMicro($m) </script>"
+                    end
+                end
+    
+            end
+            f *= "<script> alert('No more pages');</script>"
+        else
+            cp -= 1
+            f = open(joinpath(@__DIR__, "ui/out-1.html")) do file
+                read(file, String)
+            end
+
+            d = open(joinpath(@__DIR__, "ui/output/$(cp).txt")) do file
+                inlines = readlines(file)
+                molec = true
+                for m in inlines
+                    if m == "::"
+                        molec = false
+                        continue
+                    end
+                    if molec
+                        pop = split(m, "=")
+                        f *= "<script> addMole('$(pop[1])', $(pop[2])) </script>"
+                    else
+                        f *= "<script> addMicro($m) </script>"
+                    end
+                end
+    
+            end
+        end
+    elseif args == "forward"
+        if cp + 1 > pcount
+            f = open(joinpath(@__DIR__, "ui/out-1.html")) do file
+                read(file, String)
+            end
+
+            d = open(joinpath(@__DIR__, "ui/output/$(cp).txt")) do file
+                inlines = readlines(file)
+                molec = true
+                for m in inlines
+                    if m == "::"
+                        molec = false
+                        continue
+                    end
+                    if molec
+                        pop = split(m, "=")
+                        f *= "<script> addMole('$(pop[1])', $(pop[2])) </script>"
+                    else
+                        f *= "<script> addMicro($m) </script>"
+                    end
+                end
+    
+            end
+            f *= "<script> alert('No more pages')</script>"
+        else
+            cp += 1
+            f = open(joinpath(@__DIR__, "ui/out-1.html")) do file
+                read(file, String)
+            end
+
+            d = open(joinpath(@__DIR__, "ui/output/$(cp).txt")) do file
+                inlines = readlines(file)
+                molec = true
+                for m in inlines
+                    if m == "::"
+                        molec = false
+                        continue
+                    end
+                    if molec
+                        pop = split(m, "=")
+                        f *= "<script> addMole('$(pop[1])', $(pop[2])) </script>"
+                    else
+                        f *= "<script> addMicro($m) </script>"
+                    end
+                end
+    
+            end
+        end
     end
+    f*= "<script> page = '$cp/$pcount';"
+    body!(w, f)
 end

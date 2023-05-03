@@ -27,7 +27,24 @@
     <div id="Output" class="card">
         <table id="moles"></table>
         <div id="graph"></div>
-        Simlation success
+        <button onclick='Blink.msg("page change", "back "+page)'>Previous</button>
+        <button onclick='Blink.msg("page change", "forward "+page)'>Next</button>
+        
+
+        <table id="outMole">
+            <tr>
+                <th>Name</th>
+                <th>Count</th>
+            </tr>
+        </table>
+
+        <table id="outMicro">
+            <tr>
+                <th>Name</th>
+                <th>condition</th>
+                <th>Lifespan</th>
+            </tr>
+        </table>
     </div>
 </body>
 </body>
@@ -35,5 +52,40 @@
 </html>
 
 <Script>
-    
+    function addMole(name,count) {
+    tbl = document.getElementById("outMole");
+
+    vname = document.createElement("th");
+    vname.innerHTML= name;
+
+    vcount = document.createElement("th");
+    vcount.innerHTML = count;
+
+    row = document.createElement("tr");
+    row.appendChild(vname);
+    row.appendChild(vcount);
+
+    tbl.appendChild(row);
+
+    }
+
+    function addMicro(name, condition, lifespan, x, y ) {
+        tbl = document.getElementById("outMicro");
+
+        vname = document.createElement("th");
+        vname.innerHTML = name;
+
+        vcond = document.createElement("th");
+        vcond.innerHTML = condition;
+
+        vlife = document.createElement("th");
+        vlife.innerHTML = lifespan;
+
+        row = document.createElement("tr");
+        row.appendChild(vname);
+        row.appendChild(vcond);
+        row.appendChild(vlife);
+
+        tbl.appendChild(row);
+    }
 </Script>

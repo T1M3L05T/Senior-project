@@ -13,6 +13,7 @@ function Simulation(settings, microbes, startmoles)
     capT = parse(Int, settings[2])
     size = parse(Int, settings[3])
     evar = parse(Int, settings[4])
+    capture = -1
     initmicrob = []
     moles = Dict()
     micro_grid = []
@@ -24,14 +25,17 @@ function Simulation(settings, microbes, startmoles)
     # end
 
     function born(in, x, y)
-
-        for (i,m) in enumerate(initmicrob)
-            if in == m.name
-                push!(micro_grid, deepcopy(initmicrob[i]))
+        if length(micro_grid) < size^2
+            for (i, m) in enumerate(initmicrob)
+                if in == m.name
+                    push!(micro_grid, deepcopy(initmicrob[i]))
+                end
             end
+            last(micro_grid).x = rand(1:size)
+            last(micro_grid).y = rand(1:size)
+        else
+            return
         end
-        last(micro_grid).x = rand(1:size)
-        last(micro_grid).y = rand(1:size)
 
         # for i in range(1:1000)
         #     j = 0
@@ -66,7 +70,6 @@ function Simulation(settings, microbes, startmoles)
     #loading molcules from hdd into main memory
     #using microbes loaded to get food and excrement  
     for value in initmicrob
-
         if value.name == "None" || value.name == 0
             continue
         end
@@ -75,7 +78,8 @@ function Simulation(settings, microbes, startmoles)
                 continue
             end
             if !haskey(moles, i)
-                push!(moles, i => mole_load(i,size))
+                push!(moles, i => mole_load(i, size))
+                moles[i].total=0
             end
         end
         for i in value.excrement
@@ -83,8 +87,16 @@ function Simulation(settings, microbes, startmoles)
                 continue
             end
             if !haskey(moles, i)
-                push!(moles, i => mole_load(i,size))
+                push!(moles, i => mole_load(i, size))
+                moles[i].total=1000
             end
+        end
+        count = 0
+        for i in range(1, rand(1:(size/100)))
+            count += 1
+            push!(micro_grid, deepcopy(value))
+            micro_grid[count].x = rand(1:size)
+            micro_grid[count].y = rand(1:size)
         end
     end
 
@@ -94,31 +106,35 @@ function Simulation(settings, microbes, startmoles)
             continue
         end
         if !haskey(moles, v)
-            push!(moles, v => mole_load(v,size))
+            push!(moles, v => mole_load(v, size))
         end
-        moles[v].arr = fill(1500000,(size,size))
+        moles[v].arr = fill(150000, (size, size))
         moles[v].factor = 100
-        moles[v].total = 1500000 * 100^2
+        moles[v].total = 150000 * size^2
     end
 
+    push!(moles, "Hydrogen" => mole_load("Hydrogen", size))
+
     #random micro_grid assignments
-    for m in initmicrob
-        count=0
-        for i in range(1, rand(10:(size/10)))
-            count +=1
-            push!(micro_grid, deepcopy(m))
-            micro_grid[count].x = rand(1:size)
-            micro_grid[count].y = rand(1:size)
-        end
-    end
-    capture = 0
+    # for m in initmicrob
+    #     count = 0
+    #     for i in range(1, rand(1:(size/100)))
+    #         count += 1
+    #         push!(micro_grid, deepcopy(m))
+    #         micro_grid[count].x = rand(1:size)
+    #         micro_grid[count].y = rand(1:size)
+    #     end
+    # end
+    
     #actual simulation calulations
+    for m in micro_grid
+        println(m.name)
+    end
     for time in 0:deltaT:10000
         println(time)
-        capture = 0
-        count=0
+        count = 0
         for m in micro_grid
-            count+=1
+            count += 1
             l = m.x
             q = m.y
             env = 0
@@ -127,25 +143,25 @@ function Simulation(settings, microbes, startmoles)
             end
             if env == "Die"
                 deleteat!(micro_grid, count)
-                count-=1
+                count -= 1
             elseif env == "Birth"
                 born(m.name, l, q)
             end
         end
         if isempty(micro_grid)
-            return
+            return capture
         end
         println("cell complete")
         @threads for m in collect(values(moles))
             updateMolecule(m, deltaT, size)
         end
-        balance(moles,size)
+        balance(moles, size)
         println("Chemistry")
         #this is to save imgs of the micro_grid
-        if capture == floor(time / capT)
+        if capture == floor(time // capT)
             continue
         else
-            capture = floor(time / capT)
+            capture +=1
             resultSave(capture, micro_grid, moles)
 
         end

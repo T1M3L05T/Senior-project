@@ -1,0 +1,9 @@
+Glucose=149997861800
+Hydrogen=0
+Nitrate=149999750700
+Carbon Dioxide=12829200
+Ammonium Ion=0
+Accetate=5343
+Ammonium=0
+::
+'Yeast', 100.83866666666665, 2700, 2.1382, 1, 1
